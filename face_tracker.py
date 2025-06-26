@@ -1,10 +1,11 @@
 import cv2
 import time
 import serial
+import torch 
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-ser = serial.Serial('/dev/cu.usbserial-A5069RR4', 9600)
+#ser = serial.Serial('/dev/cu.usbserial-A5069RR4', 9600)
 time.sleep(2)
 
 cap = cv2.VideoCapture(0)
@@ -24,7 +25,7 @@ while True:
         cy = y + h // 2
 
         msg = f"{cx},{cy}\n"
-        ser.write(msg.encode())
+#        ser.write(msg.encode())
         print(f"Sending: {msg.strip()}")
 
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
@@ -41,5 +42,5 @@ while True:
         break
 
 cap.release()
-ser.close()
+#ser.close()
 cv2.destroyAllWindows()
