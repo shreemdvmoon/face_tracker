@@ -9,21 +9,39 @@ int angleY = 90;
 String inputString = "";
 bool newData = false;
 
+const int laserPin = 7;  // Laser now on pin 7
+
 void setup() {
   Serial.begin(9600);
-  servoX.attach(9);
-  servoY.attach(10); 
+
+  servoX.attach(8);
+  servoY.attach(9);
   servoX.write(angleX);
   servoY.write(angleY);
+
+  pinMode(laserPin, OUTPUT);
+  digitalWrite(laserPin, LOW);  // Laser OFF by default
 }
 
 void loop() {
   while (Serial.available()) {
     char inChar = (char)Serial.read();
-    if (inChar == '\n') {
+
+    if (inChar == 'o') {
+      digitalWrite(laserPin, HIGH);  // 🔫 Laser ON
+      Serial.println("Laser ON");
+      inputString = "";
+    }
+    else if (inChar == 'f') {
+      digitalWrite(laserPin, LOW);   // 🚫 Laser OFF
+      Serial.println("Laser OFF");
+      inputString = "";
+    }
+    else if (inChar == '\n') {
       newData = true;
       break;
-    } else {
+    }
+    else {
       inputString += inChar;
     }
   }
@@ -34,7 +52,6 @@ void loop() {
       int cx = inputString.substring(0, commaIndex).toInt();
       int cy = inputString.substring(commaIndex + 1).toInt();
 
-      // Map screen position (e.g., 0–640) to servo angles (30–150)
       angleX = map(cx, 0, 640, 30, 150);
       angleY = map(cy, 0, 480, 30, 150);
 
@@ -42,6 +59,7 @@ void loop() {
       delay(10);
       servoY.write(angleY);
     }
+
     inputString = "";
     newData = false;
   }
