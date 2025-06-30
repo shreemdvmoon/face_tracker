@@ -67,9 +67,8 @@ while True:
         cv.putText(frame, name, (x, y - 10), cv.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
         cv.putText(frame, f"Pos:({cx},{cy})", (x, y + h + 25), cv.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
 
-        if not laser_on:
-            ser.write(f"{cx},{cy}\n".encode())
-            time.sleep(0.02)
+        ser.write(f"{cx},{cy}\n".encode())
+        time.sleep(0.02)
 
         break
 
@@ -82,13 +81,14 @@ while True:
     if last_state == "on" and not laser_on and unknown_detected and not photo_taken_stage["after"]:
         filename = f"intruders/after_laser.png"
         cv.imwrite(filename, frame)
-        print(f"[PSaved AFTER laser: {filename}")
+        print(f"[Photo] Saved AFTER laser: {filename}")
         photo_taken_stage["after"] = True
 
     last_state = "on" if laser_on else "off"
 
     if not unknown_detected and time.time() - last_seen_time > 3:
         ser.write(b'f')
+        photo_taken_stage = {"before": False, "during": False, "after": False}
 
     cv.putText(frame, "Press 's'=ON, 'o'=OFF, 'q'=QUIT", (10, 30), cv.FONT_HERSHEY_SIMPLEX, 0.7, (200, 200, 200), 2)
     cv.imshow("Face Tracker", frame)
