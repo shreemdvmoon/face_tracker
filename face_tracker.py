@@ -37,6 +37,7 @@ while True:
     for (x, y, w, h) in faces:
         cx, cy = x + w // 2, y + h // 2
         face_roi = gray[y:y+h, x:x+w]
+        cv.imshow("Cropped Picture", face_roi)
         label, confidence = recognizer.predict(face_roi)
         name = label_map[label] if confidence < 10 else "Unknown"
 
